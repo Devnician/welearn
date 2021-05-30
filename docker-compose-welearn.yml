@@ -43,7 +43,7 @@ services:
     volumes:
       - ./data:/data
     healthcheck:
-     test: "curl --fail --silent http://welearn:8080/actuator/health | grep UP || exit 1"
+     test: "curl --fail --silent http://welearn-backend-prod:8080/actuator/health | grep UP || exit 1"
      interval: 1m
      timeout: 30s
      retries: 10

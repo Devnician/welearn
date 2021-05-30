@@ -1,4 +1,4 @@
-# welearn-back-end Production
+# welearn-back-end Continuous integration
 Distance learning project
 
 # Predefined users:

@@ -14,5 +14,5 @@ Distance learning project
 # To deploy:
 ./start.sh
 
-# To view logs
-http://{host}:5601
+# Project is accessed via url:
+http://{host}:4200

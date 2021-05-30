@@ -47,11 +47,11 @@ services:
      interval: 1m
      timeout: 30s
      retries: 10
-    depends_on:
-      es01:
-        condition: service_healthy
-      mariadb:
-        condition: service_healthy
+    # depends_on:
+    #   es01:
+    #     condition: service_healthy
+    #   mariadb:
+    #     condition: service_healthy
 
   welearn-front-end:
     container_name: welearn-front-end-prod
@@ -75,7 +75,7 @@ services:
         hard: -1
     volumes:
       - ./elasticsearch/config:/etc/elasticsearch/config
-      - ./esdata:/usr/share/elasticsearch/data
+      - esdata:/usr/share/elasticsearch/data
       - ./kibana:/elasticsearch/data/nodes/0/indices/.kibana
       - ./kibana-int:/elasticsearch/data/nodes/0/indices/kibana-int
     ports:
@@ -103,3 +103,6 @@ services:
       - "welearn_network-prod"
     depends_on:
       - es01
+
+volumes:
+  - esdata

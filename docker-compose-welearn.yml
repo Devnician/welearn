@@ -1,0 +1,105 @@
+version: "3.3"
+
+networks:
+  welearn_network-prod:
+    driver: "bridge"
+
+services:
+  mariadb:
+    container_name: mariadb
+    image: mariadb:10.4
+    networks:
+      - "welearn_network-prod"
+    environment:
+      - "MYSQL_USER=welearn"
+      - "MYSQL_PASSWORD=welearn"
+      - "MYSQL_ROOT_PASSWORD=welearn"
+      - "MYSQL_DATABASE=welearn"
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db:/var/lib/mysql
+      - ./db-log:/var/log/mysql
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "--silent"]
+      interval: 30s
+      timeout: 30s
+      retries: 6
+
+  welearn:
+    container_name: welearn-backend-prod
+    image: test1996/welearn-backend:1.0.0
+    networks:
+      - "welearn_network-prod"
+    ports:
+      - "8080:8080"
+    restart: always
+    entrypoint: java -Dspring.profiles.active=prod -jar welearn.jar
+    depends_on:
+      - mariadb
+      - es01
+      - kib01
+    volumes:
+      - ./data:/data
+    healthcheck:
+     test: [ "CMD", "curl", "-sL", "http://welearn:8080/actuator/health" ]
+     interval: 1m
+     timeout: 30s
+     retries: 10
+    depends_on:
+      es01:
+        condition: service_healthy
+      mariadb:
+        condition: service_healthy
+
+  welearn-front-end:
+    container_name: welearn-front-end-prod
+    image: pesho02/welearn-front-end:1.0.0
+    ports:
+      - "80:80"
+    networks:
+      - "welearn_network-prod"
+
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.0
+    container_name: es01
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - cluster.routing.allocation.disk.threshold_enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./elasticsearch/config:/etc/elasticsearch/config
+      - ./esdata:/usr/share/elasticsearch/data
+      - ./kibana:/elasticsearch/data/nodes/0/indices/.kibana
+      - ./kibana-int:/elasticsearch/data/nodes/0/indices/kibana-int
+    ports:
+      - 9200:9200
+    networks:
+      - "welearn_network-prod"
+    healthcheck:
+      test: ["CMD-SHELL", "curl --silent --fail localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 30s
+      retries: 8
+
+  kib01:
+    depends_on:
+      es01:
+          condition: service_healthy
+    image: docker.elastic.co/kibana/kibana:7.13.0
+    container_name: kib01
+    ports:
+      - 5601:5601
+    environment:
+      ELASTICSEARCH_URL: http://es01:9200
+      ELASTICSEARCH_HOSTS: '["http://es01:9200"]'
+    networks:
+      - "welearn_network-prod"
+    depends_on:
+      - es01

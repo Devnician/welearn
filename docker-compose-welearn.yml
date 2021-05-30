@@ -20,7 +20,7 @@ services:
     restart: always
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "--silent"]
-      interval: 30s
+      interval: 15s
       timeout: 30s
       retries: 6
 
@@ -38,8 +38,8 @@ services:
     volumes:
       - ./data:/data
     healthcheck:
-     test: [ "CMD", "curl", "-sL", "http://welearn:8080/actuator/health" ]
-     interval: 1m
+     test: "curl --fail --silent http://welearn-ci:8080/actuator/health | grep UP || exit 1"
+     interval: 10s
      timeout: 30s
      retries: 10
     depends_on:

@@ -8,7 +8,7 @@
 5. Docker installed on the server machine
 
 #### CI
-1. Code is pushed into develop/main branch or tag is released - https://github.com/Devnician/welearn-back-end
+1. Code is pushed into develop - https://github.com/Devnician/welearn-back-end
 2. Travis automation script is activated
 3. Access the server machine
 4. Clone the current repository - https://github.com/Devnician/welearn

@@ -7,6 +7,9 @@
 4. Docker
 5. Docker installed on the server machine
 
+# Project is accessed via url:
+http://{host}:4200
+
 #### CI
 1. Code is pushed into develop - https://github.com/Devnician/welearn-back-end
 2. Travis automation script is activated
@@ -52,10 +55,10 @@
       branch: develop`
 4. Before_deploy script is executed
 * Login as docker user in order to be able to push into docker hub subsequently - `- docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD`. Note that environment variables must be declared for the project in the travis client which is accessed via browser - https://travis-ci.com/github/Devnician/welearn-front-end
-* Create a docker image on the travis VM `docker build -t welearn-backend .`
+* Create a docker image on the travis VM `docker build -t welearn-front-end .`
 * Validation check if the image is available - `docker images`
-* Tag the image so that it can be easily pulled from docker hub `docker tag welearn-backend $DOCKER_USERNAME/welearn-backend`
-* Push the image into docker hub `docker push $DOCKER_USERNAME/welearn-backend`
+* Tag the image so that it can be easily pulled from docker hub `docker tag welearn-front-end $DOCKER_USERNAME/welearn-front-end`
+* Push the image into docker hub `docker push $DOCKER_USERNAME/welearn-front-end`
 </details>
 
 ## /start.sh
@@ -114,6 +117,3 @@ Environment variables need to match the ones from docker spring profile for the 
 * Username: student2
 * Username: observer
 * Password: admiN123+
-
-# Project is accessed via url:
-http://{host}:4200

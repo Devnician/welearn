@@ -5,7 +5,7 @@ networks:
     driver: "bridge"
 
 services:
-  mailserver:
+  mailhog:
     container_name: mailhog
     image: mailhog/mailhog
     ports:
